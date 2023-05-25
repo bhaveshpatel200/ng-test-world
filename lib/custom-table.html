@@ -1,0 +1,54 @@
+<div class="bh-antialiased bh-relative bh-text-black bh-text-sm bh-font-normal">
+    <div class="bh-table-responsive" [ngClass]="{'bh-min-h-[300px]': curentLoader }" [style]="{ height: stickyHeader && height }">
+        <table [ngClass]="[skin]">
+            <thead [ngClass]="{ 'bh-sticky bh-top-0 bh-z-10': stickyHeader }">
+                <column-header
+                    [all]="props"
+                    [currentSortColumn]="currentSortColumn"
+                    [currentSortDirection]="currentSortDirection"
+                    [isOpenFilter]="isOpenFilter"
+                    [checkAll]="selectedAll"
+                    (selectAll)="selectAll($event)"
+                    (sortChange)="sortChangeMethod($event)"
+                    (filterChange)="filterChangeMethod()"
+                    (toggleFilterMenu)="toggleFilterMenu($event)"
+                ></column-header>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="filterRowCount">
+                    <tr *ngFor="let item of filterItems; let i = index" [ngClass]="[rowClass, selectRowOnClick ? 'bh-cursor-pointer' : '']" (click)="rowClickMethod(item, i)">
+                        <td *ngIf="hasCheckbox" [ngClass]="{'bh-sticky bh-left-0 bh-bg-[#f6f7fa]': stickyFirstColumn}">
+                            <div class="bh-checkbox">
+                                <!-- <input type="checkbox" value="{{item[uniqueKey] ? item[uniqueKey] : i}}" [(ngModel)]="item.selected" (click)="$event.stopPropagation()" /> -->
+                                <input type="checkbox" value="{{item[uniqueKey] ? item[uniqueKey] : i}}" [(ngModel)]="item.selected" (change)="checkIfAllSelected();" />
+                                <div>
+                                    <icon-check class="check"></icon-check>
+                                </div>
+                            </div>
+                        </td>
+                        <ng-container *ngFor="let col of columns; let j = index">
+                            <td
+                                *ngIf="!col.hide"
+                                [ngClass]="[
+                                    cellClass,
+                                    j === 0 && stickyFirstColumn ? 'bh-sticky bh-left-0 bh-bg-[#f6f7fa]' : '',
+                                    hasCheckbox && j === 0 && stickyFirstColumn ? 'bh-left-[52px]' : '',
+                                    col.cellClass ? col.cellClass : ''
+                                    ]"
+                            >
+                                <ng-container *ngIf="hasSlot(col.field)">
+                                    <ng-container [ngTemplateOutlet]="getSlotTemplate(col.field)" [ngTemplateOutletContext]="{ data: item }"></ng-container>
+                                </ng-container>
+                                <div *ngIf="!hasSlot(col.field) && col.cellRenderer" [innerHTML]="col.cellRenderer(item)"></div>
+                                <ng-container *ngIf="!hasSlot(col.field) && !col.cellRenderer"> {{ cellValue(item, col.field) }} </ng-container>
+                            </td>
+                        </ng-container>
+                    </tr>
+                </ng-container>
+                <tr *ngIf="!filterRowCount">
+                    <td [attr.colspan]="columns.length + 1">{{ noDataContent }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

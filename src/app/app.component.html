@@ -1,0 +1,7 @@
+<div>
+    <ng-datatable #datatable [rows]="rows" [columns]="cols" [totalRows]="rows.length" [hasCheckbox]="true" [sortable]="true" [pageSize]="5" [pageSizeOptions]="[5, 10]" skin="bh-table-striped bh-table-hover">
+        <ng-template slot="name" let-value="data">
+            <strong>#{{ value.name }}</strong>
+        </ng-template>
+    </ng-datatable>
+</div>
